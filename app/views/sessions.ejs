@@ -1,0 +1,80 @@
+<h1 class="text-2xl font-bold mb-6">
+  <% if (isAdmin) { %>
+    All Sessions
+  <% } else { %>
+    Recent 7 Days with Sessions
+  <% } %>
+</h1>
+
+<% if (isAdmin) { %>
+  <a href="/sessions/add" class="bg-green-500 text-white px-4 py-2 rounded mb-4 inline-block">➕ Add Session</a>
+
+  <table class="table-auto w-full border border-gray-300">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-4 py-2">Date</th>
+        <th class="px-4 py-2">Time</th>
+        <th class="px-4 py-2">Duration</th>
+        <th class="px-4 py-2">Location</th>
+        <th class="px-4 py-2">Trainer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% sessions.forEach(s => { %>
+        <tr class="border-t">
+          <td class="px-4 py-2"><%= new Date(s.session_date).toLocaleDateString('tr-TR') %></td>
+          <td class="px-4 py-2"><%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) %></td>
+          <td class="px-4 py-2"><%= s.duration_min %> dk</td>
+          <td class="px-4 py-2"><%= s.location %></td>
+          <td class="px-4 py-2"><%= s.trainer_name %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+<% } else { %>
+  <% 
+    const grouped = {};
+    sessions.forEach(s => {
+      const dateKey = new Date(s.session_date).toLocaleDateString('tr-TR');
+      if (!grouped[dateKey]) grouped[dateKey] = [];
+      grouped[dateKey].push(s);
+    });
+
+    const sortedDates = Object.keys(grouped).sort((a, b) => {
+      const d1 = new Date(a.split('.').reverse().join('-'));
+      const d2 = new Date(b.split('.').reverse().join('-'));
+      return d2 - d1;
+    });
+  %>
+
+  <% if (sortedDates.length === 0) { %>
+    <p class="text-gray-500 italic">No sessions available for the selected period.</p>
+  <% } else { %>
+    <div class="grid grid-cols-1 gap-6">
+      <% sortedDates.forEach(date => { %>
+        <div class="bg-white shadow p-4 rounded">
+          <h2 class="text-xl font-semibold mb-2"><%= date %></h2>
+          <% grouped[date].forEach(s => { %>
+            <div class="border-b py-2">
+              <div>
+                <strong>
+                  <%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) %>
+                </strong>
+              </div>
+              <div>
+                <%= s.location %>
+                <% if (s.trainer_name) { %>
+                  — Trainer: <%= s.trainer_name %>
+                <% } %>
+              </div>
+              <% if (session?.userId && !isAdmin) { %>
+                <a href="/bookings/add/<%= s.id %>" class="text-blue-600 hover:underline text-sm">Book</a>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+<% } %>

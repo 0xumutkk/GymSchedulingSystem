@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GymProject</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+</head>
+<body class="bg-gray-50 text-gray-900 p-6">
+  <div class="max-w-5xl mx-auto">
+    <!-- Navbar -->
+    <nav class="mb-6">
+      <a href="/sessions" class="ml-4 text-blue-600 hover:underline">Sessions</a>
+   
+        <% if (isAdmin) { %>
+          <a href="/members" class="ml-4 text-blue-600 hover:underline">Members</a>  
+          <a href="/trainers" class="ml-4 text-blue-600 hover:underline">Trainers</a>
+           <a href="/bookings" class="ml-4 text-blue-600 hover:underline">Bookings</a>
+          <a href="/dashboard" class="ml-4 text-indigo-600 hover:underline">Dashboard</a>
+           <a href="/logout" class="ml-4 text-red-600 hover:underline">Logout</a>
+
+<% } else if (session?.userId) { %>
+  <span class="ml-6 text-gray-700">Welcome, <%= session.userName %></span>    
+  <a href="/bookings/mybookings" class="ml-4 text-blue-600 hover:underline">My Bookings</a>
+  <a href="/logout" class="ml-4 text-red-600 hover:underline">Logout</a>
+
+<% } else { %>
+  <a href="/signup" class="ml-4 text-blue-600 hover:underline">Sign Up</a>
+  <a href="/login" class="ml-4 text-blue-600 hover:underline">Login</a>
+  <a href="/admin-login" class="ml-4 text-indigo-600 hover:underline">Admin</a>
+<% } %>
+
+
+    </nav>
+    
+
+    <!-- Main Content -->
+    <%- body %>
+  </div>
+</body>
+</html>

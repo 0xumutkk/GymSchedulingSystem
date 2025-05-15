@@ -1,0 +1,83 @@
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold">Member List</h1>
+  <% if (isAdmin) { %>
+    <a href="/members/add" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+      ➕ Add Member
+    </a>
+  <% } %>
+</div>
+
+<form method="GET" action="/members" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+  <input type="text" name="search" placeholder="Search..." value="<%= search || '' %>" class="border p-2 w-full">
+
+  <select name="gender" class="border p-2 w-full">
+    <option value="Any" <%= gender === 'Any' || !gender ? 'selected' : '' %>>Any Gender</option>
+    <option value="Male" <%= gender === 'Male' ? 'selected' : '' %>>Male</option>
+    <option value="Female" <%= gender === 'Female' ? 'selected' : '' %>>Female</option>
+    <option value="Other" <%= gender === 'Other' ? 'selected' : '' %>>Other</option>
+  </select>
+
+  <select name="membership_type" class="border p-2 w-full">
+    <option value="Any" <%= membership_type === 'Any' || !membership_type ? 'selected' : '' %>>Any Membership</option>
+    <option value="Gold" <%= membership_type === 'Gold' ? 'selected' : '' %>>Gold</option>
+    <option value="Silver" <%= membership_type === 'Silver' ? 'selected' : '' %>>Silver</option>
+    <option value="Bronze" <%= membership_type === 'Bronze' ? 'selected' : '' %>>Bronze</option>
+  </select>
+
+  <input type="date" name="join_min" value="<%= join_min || '' %>" class="border p-2 w-full" placeholder="Join Date From">
+  <input type="date" name="join_max" value="<%= join_max || '' %>" class="border p-2 w-full" placeholder="Join Date To">
+
+  <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full md:col-span-2 lg:col-span-3">
+    Filter
+  </button>
+</form>
+
+<table class="table-auto w-full border border-gray-300 mb-6">
+  <thead class="bg-gray-100 text-left">
+    <tr>
+      <th class="px-4 py-2">ID</th>
+      <th class="px-4 py-2">Name</th>
+      <th class="px-4 py-2">Email</th>
+      <th class="px-4 py-2">Membership</th>
+      <th class="px-4 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% members.forEach(member => { %>
+      <tr class="border-t hover:bg-gray-50">
+        <td class="px-4 py-2"><%= member.id %></td>
+        <td class="px-4 py-2"><%= member.full_name %></td>
+        <td class="px-4 py-2"><%= member.email %></td>
+        <td class="px-4 py-2"><%= member.membership_type %></td>
+        <td class="px-4 py-2">
+          <% if (isAdmin) { %>
+            <a href="/members/edit/<%= member.id %>" class="text-blue-600 hover:underline">Edit</a>
+            |
+            <a href="/members/delete/<%= member.id %>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure?')">Delete</a>
+          <% } else { %>
+            <span class="text-gray-400 italic">Restricted</span>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<% if (totalPages > 1) { %>
+  <div class="flex gap-2 items-center justify-center text-sm">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <% let queryString = `?page=${i}` %>
+      <% if (search) queryString += `&search=${search}`; %>
+      <% if (gender) queryString += `&gender=${gender}`; %>
+      <% if (membership_type) queryString += `&membership_type=${membership_type}`; %>
+      <% if (join_min) queryString += `&join_min=${join_min}`; %>
+      <% if (join_max) queryString += `&join_max=${join_max}`; %>
+
+      <% if (i === page) { %>
+        <span class="px-3 py-1 bg-blue-500 text-white rounded"><%= i %></span>
+      <% } else { %>
+        <a href="/members<%= queryString %>" class="px-3 py-1 border rounded hover:bg-blue-100"><%= i %></a>
+      <% } %>
+    <% } %>
+  </div>
+<% } %>

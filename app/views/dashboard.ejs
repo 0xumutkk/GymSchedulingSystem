@@ -1,0 +1,63 @@
+<h1 class="text-2xl font-bold mb-6">📊 Admin Dashboard</h1>
+
+<!-- Üstteki 4 kutu: üyeler + rezervasyon -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Toplam Üye -->
+  <div class="p-4 bg-white shadow rounded">
+    <h2 class="text-xl font-semibold">Total Members</h2>
+    <p class="text-3xl mt-2 font-bold text-blue-600"><%= totalMembers %></p>
+  </div>
+
+  <!-- Bu Ay Katılan -->
+  <div class="p-4 bg-white shadow rounded">
+    <h2 class="text-xl font-semibold">Joined This Month</h2>
+    <p class="text-3xl mt-2 font-bold text-green-600"><%= joinedThisMonth %></p>
+  </div>
+
+  <!-- Toplam Rezervasyon -->
+  <div class="p-4 bg-white shadow rounded">
+    <h2 class="text-xl font-semibold">Total Reservations</h2>
+    <p class="text-3xl mt-2 font-bold text-indigo-600"><%= totalBookings %></p>
+  </div>
+
+  <!-- Rezervasyon Durumları -->
+  <div class="p-4 bg-white shadow rounded">
+    <h3 class="text-lg font-bold mb-2">Reservation Statuses</h3>
+    <ul class="space-y-1">
+      <% bookingStatusCounts.forEach(b => { %>
+        <li><%= b.status %>: <%= b.count %></li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+
+<!-- Alt blok: Dağılımlar -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="p-4 bg-white shadow rounded">
+    <h3 class="text-lg font-bold mb-2">Gender Distribution</h3>
+    <ul>
+      <% genderCounts.forEach(row => { %>
+        <li><%= row.gender %>: <%= row.count %></li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <div class="p-4 bg-white shadow rounded">
+    <h3 class="text-lg font-bold mb-2">Membership Types</h3>
+    <ul>
+      <% membershipCounts.forEach(row => { %>
+        <li><%= row.membership_type %>: <%= row.count %></li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+
+<!-- En Aktif Üyeler -->
+<div class="mt-8 p-4 bg-white shadow rounded">
+  <h3 class="text-lg font-bold mb-2">Most Active Members</h3>
+  <ol class="list-decimal pl-4 space-y-1">
+    <% topMembers.forEach(m => { %>
+      <li><%= m.full_name %> — <%= m.count %> rezervasyon</li>
+    <% }) %>
+  </ol>
+</div>

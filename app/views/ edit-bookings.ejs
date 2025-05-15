@@ -1,0 +1,29 @@
+<h1 class="text-2xl font-bold mb-4">Edit Booking</h1>
+
+<form action="/bookings/edit/<%= booking.booking_id %>" method="POST" class="space-y-4">
+  <label>Member:</label>
+  <select name="member_id" class="border p-2 w-full" required>
+    <% members.forEach(m => { %>
+      <option value="<%= m.id %>" <%= booking.member_id === m.id ? 'selected' : '' %>><%= m.full_name %></option>
+    <% }) %>
+  </select>
+
+  <label>Session:</label>
+  <select name="session_id" class="border p-2 w-full" required>
+    <% sessions.forEach(s => { %>
+      <option value="<%= s.id %>" <%= booking.session_id === s.id ? 'selected' : '' %>><%= new Date(s.session_date).toLocaleString() %></option>
+    <% }) %>
+  </select>
+
+  <label>Booking Date:</label>
+  <input type="date" name="booking_date" value="<%= booking.booking_date.toISOString().split('T')[0] %>" class="border p-2 w-full" required>
+
+  <label>Status:</label>
+  <select name="status" class="border p-2 w-full" required>
+    <option <%= booking.status === 'Booked' ? 'selected' : '' %>>Booked</option>
+    <option <%= booking.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+    <option <%= booking.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+  </select>
+
+  <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+</form>

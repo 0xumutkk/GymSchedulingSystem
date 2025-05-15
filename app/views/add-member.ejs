@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Member</title>
+</head>
+<body>
+<h1 class="text-2xl font-bold mb-4">Add New Member</h1>
+<form action="/members/add" method="POST" class="space-y-4">
+  <label>Full Name:</label><br>
+  <input type="text" name="full_name" placeholder="Full Name" class="border p-2 w-full" required>
+
+  <label>Email:</label><br>
+  <input type="email" name="email" placeholder="Email" class="border p-2 w-full" required>
+
+  <label>Phone:</label><br>
+  <input type="text" name="phone" placeholder="Phone" class="border p-2 w-full">
+
+  <label>Gender:</label><br>
+  <select name="gender" class="border p-2 w-full">
+    <option>Male</option>
+    <option>Female</option>
+    <option>Other</option>
+  </select>
+
+  <label>Date of Birth:</label><br>
+  <input type="date" name="date_of_birth" class="border p-2 w-full">
+
+  <label>Join Date:</label><br>
+  <input type="date" name="join_date" class="border p-2 w-full" required>
+
+  <label>Membership Type:</label><br>
+  <select name="gender" class="border p-2 w-full">
+    <option>Gold</option>
+    <option>Silver</option>
+    <option>Bronze</option>
+  </select>
+
+  <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+    Add Member
+  </button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Member</title>
+</head>
+<body>
+  <h1 class="text-2xl font-bold mb-4">Add New Member</h1>
+  <form action="/members/edit/<%= member.id %>" method="POST">
+    <label>Full Name:</label><br>
+    <input type="text" name="full_name" value="<%= member.full_name %>" required><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" value="<%= member.email %>" required><br>
+
+    <label>Phone:</label><br>
+    <input type="text" name="phone" value="<%= member.phone %>"><br>
+
+    <label>Gender:</label><br>
+    <select name="gender">
+      <option value="Male" <%= member.gender === 'Male' ? 'selected' : '' %>>Male</option>
+      <option value="Female" <%= member.gender === 'Female' ? 'selected' : '' %>>Female</option>
+      <option value="Other" <%= member.gender === 'Other' ? 'selected' : '' %>>Other</option>
+    </select><br>
+
+    <label>Date of Birth:</label><br>
+    <input type="date" name="date_of_birth" value="<%= member.date_of_birth.toISOString().split('T')[0] %>"><br>
+
+    <label>Join Date:</label><br>
+    <input type="date" name="join_date" value="<%= member.join_date ? member.join_date.toISOString().split('T')[0] : '' %>"><br>
+
+    <label>Membership Type:</label><br>
+    <select name="membership_type" class="border p-2 w-full" required>
+      <option value="Gold" <%= member.membership_type === 'Gold' ? 'selected' : '' %>>Gold</option>
+      <option value="Silver" <%= member.membership_type === 'Silver' ? 'selected' : '' %>>Silver</option>
+      <option value="Bronze" <%= member.membership_type === 'Bronze' ? 'selected' : '' %>>Bronze</option>
+    </select>
+        
+    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+      Update Member
+    </button>
+    
+  </form>
+</body>
+</html>

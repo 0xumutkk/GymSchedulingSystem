@@ -87,6 +87,35 @@ router.post('/admin-login', (req, res) => {
   }
 });
 
+router.get('/trainer/login', (req, res) => {
+  res.render('trainer-login', {
+    query: req.query
+  });
+});
+
+
+router.post('/trainer/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const [rows] = await db.query('SELECT * FROM trainers WHERE email = ?', [email]);
+  if (!rows.length) return res.redirect('/trainers/login?error=noaccount');
+
+  const trainer = rows[0];
+
+  const match = await bcrypt.compare(password, trainer.password); // ✅ doğru yöntem
+
+  if (!match) {
+    return res.redirect('/trainers/login?error=wrongpass');
+  }
+
+  // Giriş başarılı
+  req.session.trainerId = trainer.id;
+  req.session.isTrainer = true;
+  res.redirect('/trainers/dashboard');
+});
+
+
+
 
 // GET /logout → Oturumu sonlandır
 router.get('/logout', (req, res) => {

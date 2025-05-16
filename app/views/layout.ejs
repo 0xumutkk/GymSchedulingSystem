@@ -11,33 +11,72 @@
 <body class="bg-gray-50 text-gray-900 p-6">
   <div class="max-w-5xl mx-auto">
     <!-- Navbar -->
-    <nav class="mb-6">
-      <a href="/sessions" class="ml-4 text-blue-600 hover:underline">Sessions</a>
-   
-        <% if (isAdmin) { %>
-          <a href="/members" class="ml-4 text-blue-600 hover:underline">Members</a>  
-          <a href="/trainers" class="ml-4 text-blue-600 hover:underline">Trainers</a>
-           <a href="/bookings" class="ml-4 text-blue-600 hover:underline">Bookings</a>
-          <a href="/dashboard" class="ml-4 text-indigo-600 hover:underline">Dashboard</a>
-           <a href="/logout" class="ml-4 text-red-600 hover:underline">Logout</a>
+    <nav class="mb-6 flex flex-wrap items-center gap-4">
+  <a href="/sessions" class="text-blue-600 hover:underline">Sessions</a>
 
-<% } else if (session?.userId) { %>
-  <span class="ml-6 text-gray-700">Welcome, <%= session.userName %></span>    
-  <a href="/bookings/mybookings" class="ml-4 text-blue-600 hover:underline">My Bookings</a>
-  <a href="/logout" class="ml-4 text-red-600 hover:underline">Logout</a>
+  <% if (isAdmin) { %>
+    <a href="/members" class="text-blue-600 hover:underline">Members</a>
+    <a href="/trainers" class="text-blue-600 hover:underline">Trainers</a>
+    <a href="/bookings" class="text-blue-600 hover:underline">Bookings</a>
+    <a href="/dashboard" class="text-indigo-600 hover:underline">Dashboard</a>
+    <a href="/logout" class="text-red-600 hover:underline">Logout</a>
 
-<% } else { %>
-  <a href="/signup" class="ml-4 text-blue-600 hover:underline">Sign Up</a>
-  <a href="/login" class="ml-4 text-blue-600 hover:underline">Login</a>
-  <a href="/admin-login" class="ml-4 text-indigo-600 hover:underline">Admin</a>
-<% } %>
+  <% } else if (session?.userId) { %>
+    <span class="text-gray-700">Welcome, <%= session.userName %></span>
+    <a href="/bookings/mybookings" class="text-blue-600 hover:underline">My Bookings</a>
+    <a href="/logout" class="text-red-600 hover:underline">Logout</a>
 
+  <% } else if (session?.trainerId) { %>
+    <a href="/trainers/dashboard" class="text-purple-600 hover:underline">Trainer Panel</a>
+    <a href="/logout" class="text-red-600 hover:underline">Logout</a>
 
-    </nav>
-    
+  <% } else { %>
 
+    <!-- Signup Dropdown -->
+    <div class="relative inline-block text-left">
+      <button onclick="toggleDropdown('signupDropdown')" class="text-green-600 font-semibold hover:underline focus:outline-none">
+        Sign Up
+      </button>
+      <div id="signupDropdown" class="hidden absolute z-10 mt-2 w-32 bg-white border border-gray-200 rounded shadow">
+        <a href="/signup" class="block px-4 py-2 text-sm hover:bg-gray-100">Member</a>
+        <a href="/trainers/signup" class="block px-4 py-2 text-sm hover:bg-gray-100">Trainer</a>
+      </div>
+    </div>
+
+    <!-- Login Dropdown -->
+    <div class="relative inline-block text-left">
+      <button onclick="toggleDropdown('loginDropdown')" class="text-blue-600 font-semibold hover:underline focus:outline-none">
+        Login
+      </button>
+      <div id="loginDropdown" class="hidden absolute z-10 mt-2 w-32 bg-white border border-gray-200 rounded shadow">
+        <a href="/login" class="block px-4 py-2 text-sm hover:bg-gray-100">Member</a>
+        <a href="/trainers/login" class="block px-4 py-2 text-sm hover:bg-gray-100">Trainer</a>
+      </div>
+    </div>
+
+    <!-- Admin Login -->
+    <a href="/admin-login" class="text-indigo-600 hover:underline">Admin</a>
+  <% } %>
+</nav>
     <!-- Main Content -->
     <%- body %>
   </div>
+    <script>
+  function toggleDropdown(id) {
+    document.querySelectorAll('.absolute').forEach(dropdown => {
+      if (dropdown.id !== id) dropdown.classList.add('hidden');
+    });
+    document.getElementById(id).classList.toggle('hidden');
+  }
+
+  // Kapanma efekti için dışarı tıklamayı dinle
+  window.addEventListener('click', function(e) {
+    document.querySelectorAll('.absolute').forEach(dropdown => {
+      if (!dropdown.contains(e.target) && !e.target.closest('button')) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>
 </body>
 </html>

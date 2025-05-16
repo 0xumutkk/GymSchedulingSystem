@@ -36,8 +36,10 @@
   <div class="p-4 bg-white shadow rounded">
     <h3 class="text-lg font-bold mb-2">Gender Distribution</h3>
     <ul>
-      <% genderCounts.forEach(row => { %>
-        <li><%= row.gender %>: <%= row.count %></li>
+       <% genderCounts.forEach(row => { %>
+        <% if (row.gender) { %>
+          <li><%= row.gender %>: <%= row.count %></li>
+        <% } %>
       <% }) %>
     </ul>
   </div>
@@ -46,8 +48,11 @@
     <h3 class="text-lg font-bold mb-2">Membership Types</h3>
     <ul>
       <% membershipCounts.forEach(row => { %>
+        <% if (row.membership_type) { %>
         <li><%= row.membership_type %>: <%= row.count %></li>
-      <% }) %>
+      <% } %>
+    <% }) %>
+
     </ul>
   </div>
 </div>

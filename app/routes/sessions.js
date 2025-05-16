@@ -66,4 +66,16 @@ router.post('/add', async (req, res) => {
   }
 });
 
+router.post('/trainer/sessions/add', async (req, res) => {
+  const trainerId = req.session.trainerId;
+  const { date, time, capacity } = req.body;
+
+  await db.query(`
+    INSERT INTO Session (trainer_id, date, start_time, capacity)
+    VALUES (?, ?, ?, ?)
+  `, [trainerId, date, time, capacity]);
+
+  res.redirect('/trainer/sessions');
+});
+
 module.exports = router;

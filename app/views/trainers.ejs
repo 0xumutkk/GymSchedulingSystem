@@ -4,24 +4,31 @@
   <a href="/trainers/add" class="bg-green-500 text-white px-4 py-2 rounded">➕ Add Trainer</a>
 <% } %>
 
-<table class="table-auto w-full border border-gray-300 mt-4">
+<table class="table-auto w-full border mt-4">
   <thead class="bg-gray-100">
     <tr>
       <th class="px-4 py-2">Name</th>
       <th class="px-4 py-2">Email</th>
       <th class="px-4 py-2">Specialty</th>
-      <th class="px-4 py-2">Hire Date</th>
-      <th class="px-4 py-2">Salary</th>
+      <th class="px-4 py-2">Actions</th>
     </tr>
   </thead>
   <tbody>
-    <% trainers.forEach(t => { %>
+    <% trainers.forEach(trainer => { %>
       <tr class="border-t">
-        <td class="px-4 py-2"><%= t.name %></td>
-        <td class="px-4 py-2"><%= t.email %></td>
-        <td class="px-4 py-2"><%= t.specialty %></td>
-        <td class="px-4 py-2"><%= t.hire_date ? t.hire_date.toISOString().split('T')[0] : '' %></td>
-        <td class="px-4 py-2"><%= t.salary %></td>
+        <td class="px-4 py-2"><%= trainer.name %></td>
+        <td class="px-4 py-2"><%= trainer.email %></td>
+        <td class="px-4 py-2"><%= trainer.specialty || '-' %></td>
+        <td class="px-4 py-2">
+          <% if (isAdmin) { %>
+            <a href="/trainers/edit/<%= trainer.id %>" class="text-blue-600 hover:underline">Edit</a> |
+            <form method="POST" action="/trainers/delete/<%= trainer.id %>" style="display:inline">
+              <button type="submit" class="text-red-600 hover:underline ml-1" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+          <% } else { %>
+            <span class="text-gray-400 italic">Restricted</span>
+          <% } %>
+        </td>
       </tr>
     <% }) %>
   </tbody>

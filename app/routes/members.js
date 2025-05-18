@@ -74,6 +74,24 @@ router.get('/', isAdmin, async (req, res) => {
   }
 });
 
+const bcrypt = require('bcrypt');
+
+router.post('/add', isAdmin, async (req, res) => {
+  const { full_name, email, phone } = req.body;
+  const defaultPassword = await bcrypt.hash('changeme', 10);
+
+  try {
+    await db.query(
+      `INSERT INTO members (full_name, email, phone, password)
+       VALUES (?, ?, ?, ?)`,
+      [full_name, email, phone, defaultPassword]
+    );
+    res.redirect('/members');
+  } catch (err) {
+    console.error('Member creation error:', err.message);
+    res.status(500).send('Failed to add member');
+  }
+});
 
 
 
@@ -93,7 +111,6 @@ router.get('/delete/:id', isAdmin, async (req, res) => {
     res.status(500).send('Member could not be deleted');
   }
 });
-// GET /members/edit/:id — Üyeyi düzenleme formuna getir
 router.get('/edit/:id', isAdmin, async (req, res) => {
   const memberId = req.params.id;
 
@@ -108,7 +125,6 @@ router.get('/edit/:id', isAdmin, async (req, res) => {
   }
 });
 
-// POST /members/edit/:id — Güncelleme işlemi
 router.post('/edit/:id', isAdmin, async (req, res) => {
   const memberId = req.params.id;
   const { full_name, email, phone, gender, date_of_birth, join_date, membership_type } = req.body;

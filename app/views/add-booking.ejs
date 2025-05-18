@@ -5,11 +5,11 @@
  <label>Session:</label>
 <select name="session_id" class="border p-2 w-full" required>
   <% sessions.forEach(s => { %>
-    <option value="<%= s.id %>" <%= s.id == selectedSessionId ? 'selected' : '' %>>
+<option value="<%= s.id %>" <%= (typeof selectedSessionId !== 'undefined' && s.id == selectedSessionId) ? 'selected' : '' %>>
         <%= new Date(s.session_date).toLocaleDateString('tr-TR') %>
         — <%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) %>
         | <%= s.location %>
-        <% if (s.trainer_name) { %> — Eğitmen: <%= s.trainer_name %><% } %>
+        <% if (s.trainer_name) { %> — Trainer: <%= s.trainer_name %><% } %>
         </option>
 
   <% }) %>
@@ -19,14 +19,14 @@
   <label>Booking Date:</label>
   <input type="date" name="booking_date" class="border p-2 w-full" required>
 
-  <label>Status:</label>
-  <select name="status" class="border p-2 w-full" required>
-    <option>Booked</option>
-    <option>Cancelled</option>
   </select>
 
   <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add</button>
 </form>
 
-<input type="date" name="booking_date" required>
+<!-- <input type="date" name="booking_date" required> -->
+
+
+
+
 

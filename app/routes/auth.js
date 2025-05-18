@@ -49,27 +49,35 @@ router.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
+
+// POST /login – member only
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+
+  console.log("LOGIN ATTEMPT:", email);
 
   try {
-    const [rows] = await db.query('SELECT * FROM members WHERE email = ?', [username]);
-    const user = rows[0];
+    const [members] = await db.query('SELECT * FROM members WHERE email = ?', [email]);
+    console.log("Member found:", members.length > 0);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.render('login', { error: 'Invalid email or password' });
-    }
+    const member = members[0];
+if (member && await bcrypt.compare(password, member.password))  {
+  req.session.userId = member.id;
+  req.session.userName = member.full_name;
+  req.session.isAdmin = false;
+  return res.redirect('/sessions');
+}
 
-    req.session.userId = user.id;
-    req.session.userName = user.full_name;
-    req.session.isAdmin = false; // admin ayrı sistemde tutuluyor
+    
 
-    res.redirect('/bookings/mybookings');
-  } catch (err) {
+    res.render('login', { error: 'Invalid email or password' });
+   }catch (err) {
     console.error('Login error:', err.message);
     res.status(500).send('Login failed');
   }
 });
+
+
 
 // GET /login/admin → Admin giriş formu
 router.get('/admin-login', (req, res) => {
@@ -88,10 +96,9 @@ router.post('/admin-login', (req, res) => {
 });
 
 router.get('/trainer/login', (req, res) => {
-  res.render('trainer-login', {
-    query: req.query
-  });
+  res.render('trainer-login', { error: null });
 });
+
 
 
 router.post('/trainer/login', async (req, res) => {
@@ -112,6 +119,56 @@ router.post('/trainer/login', async (req, res) => {
   req.session.trainerId = trainer.id;
   req.session.isTrainer = true;
   res.redirect('/trainers/dashboard');
+});
+
+
+// GET: Reset form
+router.get('/reset-password-member', (req, res) => {
+  res.render('reset-password-member');
+});
+
+router.post('/reset-password-member', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const hashed = await bcrypt.hash(password, 10);
+    const [result] = await db.query(
+  'UPDATE members SET password = ? WHERE email = ?', [hashed, email]
+    );
+  
+
+    if (result.affectedRows === 0) {
+      return res.render('reset-password-member', { error: 'No member found with this email.' });
+    }
+
+    res.redirect('/login?reset=success');
+  } catch (err) {
+    console.error('Reset error:', err.message);
+    res.status(500).send('Failed to reset password');
+  }
+});
+
+
+router.get('/reset-password-trainer', (req, res) => {
+  res.render('reset-password-trainer');
+});
+
+router.post('/reset-password-trainer', async (req, res) => {
+  const { email, password } = req.body;
+  const hashed = await bcrypt.hash(password, 10);
+
+  try {
+    const [result] = await db.query('UPDATE trainers SET password = ? WHERE email = ?', [hashed, email]);
+
+    if (result.affectedRows === 0) {
+      return res.render('reset-password-trainer', { error: 'No trainer found with this email.' });
+    }
+
+    res.redirect('/trainers/login?reset=success');
+  } catch (err) {
+    console.error('Trainer reset error:', err.message);
+    res.status(500).send('Failed to reset password');
+  }
 });
 
 

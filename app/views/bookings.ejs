@@ -1,8 +1,11 @@
 <h1 class="text-2xl font-bold mb-4">Bookings</h1>
 
 
+ <% if (isAdmin) { %>
+  <a href="/bookings/admin/add" class="bg-green-500 text-white px-4 py-2 rounded">➕ Add Booking (Admin)</a>
+<% } else { %>
   <a href="/bookings/add" class="bg-green-500 text-white px-4 py-2 rounded">➕ Add Booking</a>
-
+<% } %>
 
 <table class="table-auto w-full border mt-4">
   <thead class="bg-gray-100">

@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
   try {
     let sessions;
     if (req.session.isAdmin) {
-      // Admin → tüm session'ları görsün
+
       [sessions] = await db.query(`
         SELECT s.*, t.name AS trainer_name
         FROM sessions s
@@ -54,11 +54,28 @@ router.post('/add', async (req, res) => {
   const { session_date, duration_min, location, trainer_id } = req.body;
 
   try {
+    const [conflicts] = await db.query(`
+      SELECT *
+      FROM sessions
+      WHERE location = ?
+        AND session_date < DATE_ADD(?, INTERVAL ? MINUTE)
+        AND DATE_ADD(session_date, INTERVAL duration_min MINUTE) > ?
+    `, [location, session_date, duration_min, session_date]);
+
+    if (conflicts.length > 0) {
+      const [trainers] = await db.query('SELECT id, name FROM trainers');
+      return res.render('add-session', {
+        error: 'A session already exists during this time at this location.',
+        trainers
+      });
+    }
+
     await db.query(
       `INSERT INTO sessions (session_date, duration_min, location, trainer_id)
        VALUES (?, ?, ?, ?)`,
       [session_date, duration_min, location, trainer_id]
     );
+
     res.redirect('/sessions');
   } catch (err) {
     console.error('Session insert error:', err.message);
@@ -66,16 +83,5 @@ router.post('/add', async (req, res) => {
   }
 });
 
-router.post('/trainer/sessions/add', async (req, res) => {
-  const trainerId = req.session.trainerId;
-  const { date, time, capacity } = req.body;
-
-  await db.query(`
-    INSERT INTO Session (trainer_id, date, start_time, capacity)
-    VALUES (?, ?, ?, ?)
-  `, [trainerId, date, time, capacity]);
-
-  res.redirect('/trainer/sessions');
-});
 
 module.exports = router;

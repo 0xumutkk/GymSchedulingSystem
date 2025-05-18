@@ -1,0 +1,35 @@
+<h1 class="text-2xl font-bold mb-4">Admin: Add Booking</h1>
+
+<form action="/bookings/admin/add" method="POST" class="space-y-4">
+
+  <!-- Member selection -->
+  <label class="block font-semibold">Member:</label>
+  <select name="member_id" class="border p-2 w-full" required>
+    <% members.forEach(m => { %>
+      <option value="<%= m.id %>"><%= m.full_name %></option>
+    <% }) %>
+  </select>
+
+  <!-- Session selection -->
+  <label class="block font-semibold">Session:</label>
+  <select name="session_id" class="border p-2 w-full" required>
+    <% sessions.forEach(s => { %>
+      <option value="<%= s.id %>" <%= (selectedSessionId && s.id == selectedSessionId) ? 'selected' : '' %>>
+        <%= new Date(s.session_date).toLocaleDateString('tr-TR') %>
+        — <%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) %>
+        | <%= s.location %>
+        <% if (s.trainer_name) { %> — Trainer: <%= s.trainer_name %><% } %>
+      </option>
+    <% }) %>
+  </select>
+
+  <!-- Booking date -->
+  <label class="block font-semibold">Booking Date:</label>
+  <input type="date" name="booking_date" class="border p-2 w-full" required>
+
+  <!-- Status -->
+  </select>
+
+  <!-- Submit button -->
+  <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Add Booking</button>
+</form>

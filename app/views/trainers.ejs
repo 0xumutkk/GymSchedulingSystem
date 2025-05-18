@@ -10,6 +10,7 @@
       <th class="px-4 py-2">Name</th>
       <th class="px-4 py-2">Email</th>
       <th class="px-4 py-2">Specialty</th>
+      <th class="px-4 py-2">Salary</th>
       <th class="px-4 py-2">Actions</th>
     </tr>
   </thead>
@@ -19,6 +20,7 @@
         <td class="px-4 py-2"><%= trainer.name %></td>
         <td class="px-4 py-2"><%= trainer.email %></td>
         <td class="px-4 py-2"><%= trainer.specialty || '-' %></td>
+        <td class="px-4 py-2"><%= trainer.salary ? trainer.salary + ' ₺' : '-' %></td>
         <td class="px-4 py-2">
           <% if (isAdmin) { %>
             <a href="/trainers/edit/<%= trainer.id %>" class="text-blue-600 hover:underline">Edit</a> |

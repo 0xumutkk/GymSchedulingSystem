@@ -1,5 +1,6 @@
 USE gymdb;
 
+
 CREATE TABLE members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -8,8 +9,10 @@ CREATE TABLE members (
     gender ENUM('Male', 'Female', 'Other'),
     date_of_birth DATE,
     join_date DATE,
-    membership_type VARCHAR(50)
+    membership_type VARCHAR(50),
+    password VARCHAR(255)
 );
+
 
 CREATE TABLE trainers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,8 +20,10 @@ CREATE TABLE trainers (
     email VARCHAR(100) UNIQUE NOT NULL,
     specialty VARCHAR(100),
     hire_date DATE,
-    salary DECIMAL(10,2)
+    salary DECIMAL(10,2),
+    password VARCHAR(255) NOT NULL DEFAULT 'changeme'
 );
+
 
 CREATE TABLE sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -28,6 +33,11 @@ CREATE TABLE sessions (
     trainer_id INT,
     FOREIGN KEY (trainer_id) REFERENCES trainers(id)
 );
+
+-- Add constraint: No two sessions can occur at the same time and location
+ALTER TABLE sessions
+ADD UNIQUE KEY unique_slot (session_date, location);
+
 
 CREATE TABLE bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,

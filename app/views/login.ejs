@@ -3,7 +3,12 @@
 <form action="/login" method="POST" class="space-y-4 w-[400px]">
   <% if (error) { %><div class="text-red-600"><%= error %></div><% } %>
 
-  <input type="text" name="username" placeholder="Email" class=" border p-2 w-full rounded">
-  <input type="password" name="password" placeholder="Password" class="border p-2 w-full rounded">
+  <input type="text" name="email" placeholder="Email" class="border p-2 w-full rounded" required>
+  <input type="password" name="password" placeholder="Password" class="border p-2 w-full rounded" required>
+
   <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+
+  <p class="text-sm mt-2">
+    <a href="/reset-password-member" class="text-blue-600 hover:underline">Reset password?</a>
+  </p>
 </form>

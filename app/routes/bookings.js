@@ -11,7 +11,7 @@ router.get('/', isAdmin, async (req, res) => {
       FROM bookings b
       LEFT JOIN members m ON b.member_id = m.id
       LEFT JOIN sessions s ON b.session_id = s.id
-      ORDER BY b.booking_date DESC
+      ORDER BY b.booking_id DESC
     `);
     res.render('bookings', { bookings: rows });
   } catch (err) {
@@ -19,6 +19,7 @@ router.get('/', isAdmin, async (req, res) => {
     res.status(500).send('Failed to load bookings');
   }
 });
+
 
 // Form
 // GET /bookings/add
@@ -28,26 +29,42 @@ router.get('/add', isAuthenticated, async (req, res) => {
       SELECT s.id, s.session_date, s.location, t.name AS trainer_name
       FROM sessions s
       LEFT JOIN trainers t ON s.trainer_id = t.id
+      JOIN (
+        SELECT DISTINCT DATE(session_date) AS session_day
+        FROM sessions
+        ORDER BY session_day DESC
+        LIMIT 7
+      ) recent_days
+      ON DATE(s.session_date) = recent_days.session_day
       ORDER BY s.session_date ASC
     `);
 
-    res.render('add-booking', { sessions });
+    res.render('add-booking', { sessions, selectedSessionId: null });
   } catch (err) {
     console.error('Form error:', err.message);
     res.status(500).send('Failed to load form');
   }
 });
 
+
 router.get('/add/:sessionId', isAuthenticated, async (req, res) => {
   const selectedSessionId = req.params.sessionId;
 
   try {
-    const [sessions] = await db.query(`
-      SELECT s.id, s.session_date, s.location, t.name AS trainer_name
+   const [sessions] = await db.query(`
+  SELECT s.id, s.session_date, s.location, t.name AS trainer_name
       FROM sessions s
       LEFT JOIN trainers t ON s.trainer_id = t.id
+      JOIN (
+        SELECT DISTINCT DATE(session_date) AS session_day
+        FROM sessions
+        ORDER BY session_day DESC
+        LIMIT 7
+      ) recent_days
+      ON DATE(s.session_date) = recent_days.session_day
       ORDER BY s.session_date ASC
-    `);
+`);
+
 
     res.render('add-booking', { sessions, selectedSessionId });
   } catch (err) {
@@ -75,17 +92,59 @@ router.get('/cancel/:id', async (req, res) => {
   }
 });
 
+router.get('/admin/add', isAdmin, async (req, res) => {
+  try {
+    const [members] = await db.query('SELECT id, full_name FROM members');
+  const [sessions] = await db.query(`
+  SELECT s.id, s.session_date, s.location, t.name AS trainer_name
+  FROM sessions s
+  LEFT JOIN trainers t ON s.trainer_id = t.id
+  JOIN (
+    SELECT DISTINCT DATE(session_date) AS date_only
+    FROM sessions
+    ORDER BY DATE(session_date) DESC
+    LIMIT 7
+  ) recent_dates
+  ON DATE(s.session_date) = recent_dates.date_only
+  ORDER BY s.session_date ASC
+`);
+
+
+
+    res.render('add-booking-admin', {
+      members,
+      sessions,
+      selectedSessionId: null
+    });
+  } catch (err) {
+    console.error('Admin add booking form error:', err.message);
+    res.status(500).send('Failed to load admin booking form');
+  }
+});
+
+
+router.post('/admin/add', isAdmin, async (req, res) => {
+  const { member_id, session_id, booking_date } = req.body;
+  await db.query(
+    `INSERT INTO bookings (member_id, session_id, booking_date, status)
+     VALUES (?, ?, ?, ?)`,
+    [member_id, session_id, booking_date, 'Booked']
+  );
+  res.redirect('/bookings');
+});
+
+
 
 // Oluştur
 router.post('/add', isAuthenticated, async (req, res) => {
-  const member_id = req.session.userId; // kullanıcının kendisi
-  const { session_id, booking_date, status } = req.body;
+  const member_id = req.session.userId;
+  const { session_id, booking_date } = req.body;
 
   try {
     await db.query(
       `INSERT INTO bookings (member_id, session_id, booking_date, status)
        VALUES (?, ?, ?, ?)`,
-      [member_id, session_id, booking_date, status]
+      [member_id, session_id, booking_date, 'Booked'] // 👈 sabit ACTIVE olarak gönder
     );
     res.redirect('/bookings/mybookings');
   } catch (err) {
@@ -93,6 +152,7 @@ router.post('/add', isAuthenticated, async (req, res) => {
     res.status(500).send('Failed to create booking');
   }
 });
+
 
 
 router.get('/mybookings', async (req, res) => {
@@ -103,15 +163,16 @@ router.get('/mybookings', async (req, res) => {
   }
 
   try {
-    const [rows] = await db.query(`
-      SELECT b.*, s.session_date, s.location
-      FROM bookings b
-      LEFT JOIN sessions s ON b.session_id = s.id
-      WHERE b.member_id = ?
-      ORDER BY s.session_date DESC
-    `, [userId]);
+   const [rows] = await db.query(`
+  SELECT b.*, s.session_date, s.location
+  FROM bookings b
+  LEFT JOIN sessions s ON b.session_id = s.id
+  WHERE b.member_id = ?
+ ORDER BY b.booking_id DESC
+`, [userId]);
 
-    res.render('my-bookings', { bookings: rows });
+res.render('my-bookings', { bookings: rows });
+
   } catch (err) {
     console.error('MyBookings error:', err.message);
     res.status(500).send('Failed to load your bookings');

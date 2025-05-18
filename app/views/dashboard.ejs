@@ -25,9 +25,12 @@
     <h3 class="text-lg font-bold mb-2">Reservation Statuses</h3>
     <ul class="space-y-1">
       <% bookingStatusCounts.forEach(b => { %>
-        <li><%= b.status %>: <%= b.count %></li>
+        <% if (b.status) { %>
+          <li><%= b.status %>: <%= b.count %></li>
+        <% } %>
       <% }) %>
     </ul>
+
   </div>
 </div>
 

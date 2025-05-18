@@ -1,0 +1,108 @@
+How to Run – Gym Membership and Trainer Scheduling System
+
+This guide explains how to install dependencies, set up the MySQL database, and run the app locally for development or testing.
+
+---
+
+1. Prerequisites
+
+Make sure you have the following installed on your system:
+
+* Node.js (v14 – v20 recommended)
+* npm (comes with Node.js)
+* MySQL Server** (v5.7+ or MySQL 8 recommended)
+
+---
+
+2. 📁 Project Setup
+
+ 1️⃣ Extract & Navigate
+
+* Unzip the project folder.
+* Open a terminal and move into the project directory:
+
+cd GymProject
+
+ 2️⃣ Install Dependencies
+
+npm install
+
+> Installs all packages listed in `package.json`
+
+3️⃣ Configure Database
+
+Edit `app/db.js` with your local MySQL credentials:
+
+module.exports = {
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: 'your_mysql_password',
+  database: 'gymdb' // must match your DB name
+};
+
+
+---
+
+3. 🗄️ Database Setup
+
+1️⃣ Create the Database
+
+Login to MySQL and run:
+
+CREATE DATABASE gymdb;
+
+2️⃣ Import Schema
+
+mysql -u root -p gymdb < database/schema.sql
+
+
+3️⃣ (Optional) Add Sample Data
+
+mysql -u root -p gymdb < database/gym_project_insert.sql
+
+---
+
+4. 🚀 Running the Application
+
+Start the server
+
+node app/app.js
+# or, if defined:
+npm start
+
+ Open in browser
+
+http://localhost:3000
+
+Access Roles
+
+* 🔐 Admin 
+* 👨‍🏫 Trainer 
+* 🙋‍♂️ Member 
+
+---
+
+5. Default Login (for Testing)
+
+Admin Credentials:
+
+Username: admin
+Password: 1234
+
+> Trainers and members can sign up or be added by admin.
+
+---
+
+6. 🛠️ Troubleshooting
+
+❗ MySQL connection error (ECONNREFUSED):
+
+* Make sure MySQL Server is running
+* Check `app/db.js` for correct credentials
+
+---
+
+Prepared by: **Umut Kızıltoprak**
+Course: *BIM216 – Database Management Systems*
+Term Project **2024–2025**

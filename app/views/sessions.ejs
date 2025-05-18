@@ -57,12 +57,13 @@
           <h2 class="text-xl font-semibold mb-2"><%= date %></h2>
           <% grouped[date].forEach(s => { %>
             <div class="border-b py-2">
-              <div>
-                <strong>
-                  <%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) %>
-                </strong>
-              </div>
-              <div>
+            <div class="flex justify-between items-center">
+              <strong>
+                <%= new Date(s.session_date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', hour12: false }) %>
+              </strong>
+              <span class="text-sm text-gray-600"><%= s.duration_min %> dk</span> <!-- ✅ SÜRE EKLENDİ -->
+            </div>
+            <div>
                 <%= s.location %>
                 <% if (s.trainer_name) { %>
                   — Trainer: <%= s.trainer_name %>
